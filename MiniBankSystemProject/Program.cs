@@ -116,7 +116,7 @@
                 switch (number)
                 {
                     case 1:
-                        recustCreateAccounts();
+                        requestCreateAccounts();
                         break;
 
                     case 2:
@@ -161,7 +161,7 @@
 
 
         // Request For Create Account 
-        public static void recustCreateAccounts()
+        public static void requestCreateAccounts()
         {
             Console.Clear();
             Console.WriteLine("**************************************************************\n");
