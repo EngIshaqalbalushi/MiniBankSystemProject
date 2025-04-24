@@ -129,8 +129,8 @@ namespace MiniBankSystemProject
             }
         }
 
-        //
-       public static void logeInSystem()
+        // Login System for Users and admin
+        public static void logeInSystem()
 
         {
 
@@ -141,22 +141,26 @@ namespace MiniBankSystemProject
 
 
             Console.Write("Enter Account Number :");
-
+            // Input validation 
             int number;
             while (!int.TryParse(Console.ReadLine(), out number))
             {
                 Console.WriteLine("Invalid input. Please enter a number.");
             }
 
+            // check  account number for users and admin if found or not found 
 
             if (accountNumbers.Contains(number))
             {
+                // if found account number of user open user Interface
                 Console.WriteLine("Account found");
                 UserIU();
                 Console.WriteLine("" );
               
             }
-            else if(adm.Contains(number))
+            // if found account number of admin open admin Interface
+
+            else if (adm.Contains(number))
             {
                 Console.WriteLine("Account  found.");
                 AdminIU();
@@ -164,6 +168,8 @@ namespace MiniBankSystemProject
             else
             {
                 Console.WriteLine("Account not found.");
+                
+                requestCreateAccounts();
 
             }
 
