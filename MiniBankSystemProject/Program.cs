@@ -110,7 +110,7 @@
             }
         }
 
-        // User Interface
+        //++++++++++++++++++++++++++++++++User Interface+++++++++++++++++++++++++++++++++++++++++
         public static void UserIU()
         {
             Console.Clear();
@@ -118,8 +118,8 @@
             Console.WriteLine("                          User Page                            \n ");
             Console.WriteLine("**************************************************************\n");
 
+            /// Displays the User Interface Menu and handles user interactions
             bool Flag = true;
-
             while (Flag)
             {
                 Console.WriteLine("Select One Option");
@@ -138,6 +138,7 @@
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
                 }
+                // Process user selection
 
                 switch (number)
                 {
@@ -171,13 +172,14 @@
             }
         }
 
-        // Request For Create Account 
+        // 1 ########################## Request For Create Account ################################### 
         public static void requestCreateAccounts()
         {
             Console.Clear();
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("                  Request Create Account Page                 \n ");
             Console.WriteLine("**************************************************************\n");
+            // Collect and validate user name
 
             Console.Write("Enter Name: ");
             string name = Console.ReadLine();
@@ -187,6 +189,7 @@
                 Console.WriteLine("Name cannot be empty");
                 return;
             }
+            // Collect and validate ID number
 
             Console.Write("Enter ID Number: ");
             int idNumber;
@@ -195,12 +198,17 @@
                 Console.WriteLine("Invalid input. Please enter a valid ID number.");
             }
 
+             // Format user information and add to approval queue
             string userInfo = $"{name}|{idNumber}";
             requestCreateAccountsInfo.Enqueue(userInfo);
-            Console.WriteLine("Your account request has been submitted for admin approval.");
+            Console.WriteLine("Your account request has been submitted for admin approval\n.");
+           
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey();
+
         }
 
-        // Deposit Money
+        //############################################## Deposit Money #####################################################
         public static void depostitMoney()
         {
             Console.Clear();
