@@ -420,12 +420,15 @@ namespace MiniBankSystemProject
 
         }
 
+        //############################################## view Balances #####################################################
+
         public static void viewBalances()
         {
             Console.Clear();
             Console.WriteLine("**************************************************************");
             Console.WriteLine("                     VIEW ACCOUNT BALANCE                     ");
             Console.WriteLine("**************************************************************");
+            // Check if there are no accounts in the system
 
             if (accountNumbers.Count == 0)
             {
@@ -434,6 +437,7 @@ namespace MiniBankSystemProject
                 Console.ReadKey();
                 return;
             }
+            // Prompt user to enter an account number
 
             Console.Write("\nEnter account number: ");
             int accountNumber;
@@ -441,10 +445,15 @@ namespace MiniBankSystemProject
             {
                 Console.Write("Invalid input. Please enter a valid account number: ");
             }
+            // Search for the account number in the list
 
             int index = accountNumbers.IndexOf(accountNumber);
+           
+            // Check if the account was found 
+
             if (index >= 0)
             {
+                // Display account info
                 Console.WriteLine("\nAccount Details:");
                 Console.WriteLine("----------------");
                 Console.WriteLine($"Account Number: {accountNumbers[index]}");
@@ -452,13 +461,16 @@ namespace MiniBankSystemProject
                 Console.WriteLine($"Current Balance: {balances[index]:C}");
             }
             else
-            {
+            {// display message when not found account
                 Console.WriteLine($"\nAccount number {accountNumber} not found.");
             }
 
             Console.WriteLine("\nPress any key to return to menu...");
             Console.ReadKey();
         }
+
+
+
 
         // View transaction history
         public static void viewTransactionHistory()
