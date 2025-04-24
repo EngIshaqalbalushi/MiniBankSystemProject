@@ -6,7 +6,7 @@ namespace MiniBankSystemProject
 {
     internal class Program
     {
-      
+
 
         // Account Request Queue
         // Stores pending account creation requests in FIFO order 
@@ -20,7 +20,7 @@ namespace MiniBankSystemProject
 
 
         // Unique account identifiers
-        static List<int> accountNumbers = new List<int>();    
+        static List<int> accountNumbers = new List<int>();
         // Customer full names
         static List<string> accountNames = new List<string>();
         // Current account balances
@@ -38,7 +38,7 @@ namespace MiniBankSystemProject
         // Balance after transaction
         public static List<double> transactionBalances = new List<double>();
 
-      
+
 
 
 
@@ -55,8 +55,8 @@ namespace MiniBankSystemProject
         // Base account number (increments for new accounts)
         public static int userCordNumber = 12062000;
         // Starting balance for new accounts
-        public static int defaultBalances = 5;  
-        
+        public static int defaultBalances = 5;
+
 
         static void Main(string[] args)
         {
@@ -118,8 +118,8 @@ namespace MiniBankSystemProject
                 switch (number)
                 {
                     case 1:
-                         //UserIU();
-                       logeInSystem();
+                        //UserIU();
+                        logeInSystem();
                         break;
                     case 2:
                         logeInSystem();
@@ -169,8 +169,8 @@ namespace MiniBankSystemProject
                 // if found account number of user open user Interface
                 Console.WriteLine("Account found");
                 UserIU();
-                Console.WriteLine("" );
-              
+                Console.WriteLine("");
+
             }
             // if found account number of admin open admin Interface
 
@@ -182,7 +182,7 @@ namespace MiniBankSystemProject
             else
             {
                 Console.WriteLine("Account not found.");
-                
+
                 requestCreateAccounts();
 
             }
@@ -191,7 +191,7 @@ namespace MiniBankSystemProject
 
 
         }
-            
+
 
 
 
@@ -284,7 +284,7 @@ namespace MiniBankSystemProject
                 Console.WriteLine("Invalid input. Please enter a valid ID number.");
             }
 
-             // Format user information and add to approval queue
+            // Format user information and add to approval queue
             string userInfo = $"{name}|{idNumber}";
 
             requestCreateAccountsInfo.Enqueue(userInfo);
@@ -296,8 +296,8 @@ namespace MiniBankSystemProject
 
 
         }
-       
-        
+
+
 
         //  Prevent Duplicate Account Requests
         public static bool IsDuplicateRequest(string name, int idNumber)
@@ -355,6 +355,9 @@ namespace MiniBankSystemProject
             // Save the updated data
 
             SaveUserData();
+            // Wait for user to acknowledge before returning to menu
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey();
 
         }
 
@@ -366,7 +369,7 @@ namespace MiniBankSystemProject
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("                          Withdraw Page                        \n ");
             Console.WriteLine("**************************************************************\n");
-          //  validate user account number
+            //  validate user account number
 
             Console.Write("Enter Account Number: ");
             int accountNumber;
@@ -417,6 +420,9 @@ namespace MiniBankSystemProject
                 Console.WriteLine("Account not found.");
             }
             SaveUserData();
+            // Wait for user to acknowledge before returning to menu
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey();
 
         }
 
@@ -448,7 +454,7 @@ namespace MiniBankSystemProject
             // Search for the account number in the list
 
             int index = accountNumbers.IndexOf(accountNumber);
-           
+
             // Check if the account was found 
 
             if (index >= 0)
@@ -471,8 +477,9 @@ namespace MiniBankSystemProject
 
 
 
+        //############################################## View transaction history #####################################################
 
-        // View transaction history
+
         public static void viewTransactionHistory()
         {
             Console.Clear();
@@ -480,6 +487,7 @@ namespace MiniBankSystemProject
             Console.WriteLine("                   TRANSACTION HISTORY                        ");
             Console.WriteLine("**************************************************************");
 
+            // check if account is exist 
             if (accountNumbers.Count == 0)
             {
                 Console.WriteLine("\nNo accounts exist in the system.");
@@ -487,6 +495,7 @@ namespace MiniBankSystemProject
                 Console.ReadKey();
                 return;
             }
+            // Prompt user to enter an account number
 
             Console.Write("\nEnter account number: ");
             if (!int.TryParse(Console.ReadLine(), out int accountNumber))
@@ -497,15 +506,18 @@ namespace MiniBankSystemProject
                 return;
             }
 
+            // Get the index of the account number to access corresponding balance
+
             int accountIndex = accountNumbers.IndexOf(accountNumber);
+
             if (accountIndex == -1)
-            {
+            {// if account not found
                 Console.WriteLine($"Account {accountNumber} not found.");
                 Console.WriteLine("\nPress any key to return...");
                 Console.ReadKey();
                 return;
             }
-
+            // display account transaction history
             Console.WriteLine($"\nTransaction History for {accountNames[accountIndex]} (Account: {accountNumber})");
             Console.WriteLine($"Current Balance: {balances[accountIndex]:C2}");
             Console.WriteLine(new string('-', 60));
@@ -513,6 +525,7 @@ namespace MiniBankSystemProject
                 "Date/Time", "Type", "Amount", "Balance");
             Console.WriteLine(new string('-', 60));
 
+            // Display the transaction details in formatted columns:
             bool foundTransactions = false;
             for (int i = 0; i < transactionAccountNumbers.Count; i++)
             {
@@ -523,17 +536,18 @@ namespace MiniBankSystemProject
                     foundTransactions = true;
                 }
             }
+            // If no transactions were found for this account
 
             if (!foundTransactions)
             {
                 Console.WriteLine("No transactions found for this account.");
             }
-
+            // Wait for user to acknowledge before returning to menu
             Console.WriteLine("\nPress any key to return to menu...");
             Console.ReadKey();
         }
 
-
+        //Records a new transaction and saves it to persistent storage
         public static void AddTransaction(int accountNumber, string type, double amount, double newBalance)
         {
             transactionAccountNumbers.Add(accountNumber);
@@ -544,48 +558,27 @@ namespace MiniBankSystemProject
             SaveTransactions();
         }
 
-        // Save transactions to file
-        private static void SaveTransactions()
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(transactionsFile))
-                {
-                    for (int i = 0; i < transactionAccountNumbers.Count; i++)
-                    {
-                        writer.WriteLine($"{transactionAccountNumbers[i]}|{transactionTimestamps[i]}|" +
-                            $"{transactionTypes[i]}|{transactionAmounts[i]}|{transactionBalances[i]}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving transactions: {ex.Message}");
-            }
-        }
 
 
+        //############################################## Submit review #####################################################
 
-
-
-
-
-
-
-
-
-        // Submit review
         public static void submitReview()
         {
             Console.Clear();
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("                       Submit Review Page                      \n ");
             Console.WriteLine("**************************************************************\n");
+
+            // Prompt user to enter their review text
+
             Console.Write("Enter your review: ");
             string review = Console.ReadLine();
+            // Validate that review contains actual content
 
             if (!string.IsNullOrEmpty(review))
             {
+                //  save reviews to file to prevent data loss
+
                 submittedReviews.Push(review);
                 SaveReviews();
                 Console.WriteLine("Your review has been submitted.");
@@ -594,9 +587,16 @@ namespace MiniBankSystemProject
             {
                 Console.WriteLine("Review cannot be empty.");
             }
+
+            // Wait for user to acknowledge before returning to menu
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey();
+
         }
 
-        // Admin Interface
+
+        //############################################## Admin Interface #####################################################
+
         public static void AdminIU()
         {
             Console.Clear();
@@ -605,23 +605,29 @@ namespace MiniBankSystemProject
             Console.WriteLine("**************************************************************\n");
 
             bool Flag = true;
+            //  Main admin menu loop
 
             while (Flag)
             {
+                //  display all available admin options
+
                 Console.WriteLine("Select One Option");
                 Console.WriteLine("1- View Accounts Request");
                 Console.WriteLine("2- View  All Accounts ");
                 Console.WriteLine("3- View Reviews");
                 Console.WriteLine("4- Process Request");
+                Console.WriteLine("5- Search by National ID");
                 Console.WriteLine("0- Back to Home");
 
                 Console.WriteLine("Enter Number");
+                // Input validation for menu selection
 
                 int number;
                 while (!int.TryParse(Console.ReadLine(), out number))
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
                 }
+                // Handle menu selection
 
                 switch (number)
                 {
@@ -637,6 +643,10 @@ namespace MiniBankSystemProject
                     case 4:
                         ProcessNextAccountRequest();
                         break;
+                    case 5:
+                        SearchByNationalID();
+                        break;
+
                     case 0:
                         Console.Clear();
                         Flag = false;
@@ -649,7 +659,8 @@ namespace MiniBankSystemProject
             }
         }
 
-       
+
+        //############################################## View Account Requests #####################################################
 
         public static void ViewAccountRequests()
         {
@@ -657,15 +668,20 @@ namespace MiniBankSystemProject
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("                     Account Requests Page                    \n ");
             Console.WriteLine("**************************************************************\n");
+            //  Handle empty state if no accounts exist
 
             if (requestCreateAccountsInfo.Count == 0)
             {
                 Console.WriteLine("No pending account requests.");
             }
             else
-            {
+            {        // Display account table with column headers and formatting
+
                 Console.WriteLine("Pending Account Requests:");
                 Console.WriteLine("Name\tNational ID");
+
+                //  Output each account's details in formatted columns
+
                 foreach (string request in requestCreateAccountsInfo)
                 {
                     string[] parts = request.Split('|');
@@ -680,6 +696,7 @@ namespace MiniBankSystemProject
             Console.ReadKey();
         }
 
+        //############################################## View All Accounts #####################################################
 
         public static void ViewAllAccounts()
         {
@@ -688,14 +705,20 @@ namespace MiniBankSystemProject
             Console.WriteLine("                      ALL ACCOUNTS SUMMARY                     ");
             Console.WriteLine("**************************************************************");
 
+            //  Handle empty state if no accounts exist
+
             if (accountNumbers.Count == 0)
             {
                 Console.WriteLine("\nNo accounts found in the system.");
             }
             else
             {
+                //  Display account table with column headers and formatting
+
                 Console.WriteLine("\n{0,-15} {1,-25} {2,10}", "Account Number", "Account Holder", "Balance");
                 Console.WriteLine(new string('-', 52));
+
+                // Output each account's details in formatted columns
 
                 for (int i = 0; i < accountNumbers.Count; i++)
                 {
@@ -714,7 +737,8 @@ namespace MiniBankSystemProject
 
 
 
-       
+        //############################################## View Reviews #####################################################
+
         public static void ViewReviews()
         {
             Console.Clear();
@@ -722,12 +746,16 @@ namespace MiniBankSystemProject
             Console.WriteLine("                         Reviews Page                         \n ");
             Console.WriteLine("**************************************************************\n");
 
+            //  Check if there are any reviews to display
+
             if (submittedReviews.Count == 0)
             {
                 Console.WriteLine("No reviews submitted yet.");
             }
             else
             {
+                //  Display all reviews with separators
+
                 Console.WriteLine("Latest Reviews:");
                 foreach (var review in submittedReviews)
                 {
@@ -740,36 +768,25 @@ namespace MiniBankSystemProject
             Console.ReadKey();
         }
 
-        // Save Reviews to the file
-        public static void SaveReviews()
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(pathFile))
-                {
-                    foreach (var review in submittedReviews)
-                    {
-                        writer.WriteLine(review);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving reviews: {ex.Message}");
-            }
-        }
 
+
+        //############################################## Process Next Account Request #####################################################
 
         public static void ProcessNextAccountRequest()
         {
+            //  Check if there are any pending account requests
+
             if (requestCreateAccountsInfo.Count == 0)
             {
                 Console.WriteLine("No pending account requests.");
                 return;
             }
+            //  Get and parse the next request in queue (FIFO processing)
 
             string request = requestCreateAccountsInfo.Dequeue();
             string[] parts = request.Split('|');
+
+            // validate request format contains both name and ID
 
             if (parts.Length < 2)
             {
@@ -779,6 +796,8 @@ namespace MiniBankSystemProject
 
             string name = parts[0];
             string nationalID = parts[1];
+
+            //  Generate new account number and update system records
 
             int newAccountNumber = userCordNumber + 1;
             userCordNumber = newAccountNumber;
@@ -793,8 +812,56 @@ namespace MiniBankSystemProject
 
         }
 
+        //############################################## Search By nationa ID #####################################################
 
+        public static void SearchByNationalID()
+        {
+            Console.Clear();
+            Console.WriteLine("**************************************************************");
+            Console.WriteLine("               SEARCH ACCOUNT BY NATIONAL ID                  ");
+            Console.WriteLine("**************************************************************");
 
+            Console.Write("\nEnter National ID: ");
+            string nationalID = Console.ReadLine();
+            bool found = false;
+
+            // Search pending account requests
+            foreach (string request in requestCreateAccountsInfo)
+            {
+                string[] parts = request.Split('|');
+                if (parts.Length >= 2 && parts[1].Trim() == nationalID.Trim())
+                {
+                    Console.WriteLine("\n[PENDING REQUEST]");
+                    Console.WriteLine($"Name: {parts[0]}");
+                    Console.WriteLine($"National ID: {parts[1]}");
+                    found = true;
+                    break;
+                }
+            }
+
+            // Search existing accounts
+            // Assuming accountNames stores data as "Name|NationalID"
+            for (int i = 0; i < accountNumbers.Count; i++)
+            {
+                string[] accountInfo = accountNames[i].Split('|');
+                if (accountInfo.Length >= 2 && accountInfo[1].Trim() == nationalID.Trim())
+                {
+                    Console.WriteLine("\n[ACTIVE ACCOUNT]");
+                    Console.WriteLine($"Account Number: {accountNumbers[i]}");
+                    Console.WriteLine($"Name: {accountInfo[0]}");
+                    Console.WriteLine($"Balance: {balances[i]:C}");
+                    found = true;
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("\nNo accounts found with this National ID.");
+            }
+
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey();
+        }
 
 
         // Load Reviews from the file
@@ -961,7 +1028,7 @@ namespace MiniBankSystemProject
                 using (StreamReader reader = new StreamReader(pathAdmin))
                 {
                     int line;
-                    while ((line =int.Parse(reader.ReadLine())) != null)
+                    while ((line = int.Parse(reader.ReadLine())) != null)
                     {
                         adm.Enqueue(line);
                     }
@@ -973,5 +1040,42 @@ namespace MiniBankSystemProject
             }
         }
 
+        // Save transactions to file
+        private static void SaveTransactions()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(transactionsFile))
+                {
+                    for (int i = 0; i < transactionAccountNumbers.Count; i++)
+                    {
+                        writer.WriteLine($"{transactionAccountNumbers[i]}|{transactionTimestamps[i]}|" +
+                            $"{transactionTypes[i]}|{transactionAmounts[i]}|{transactionBalances[i]}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving transactions: {ex.Message}");
+            }
+        }
+        // Save Reviews to the file
+        public static void SaveReviews()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(pathFile))
+                {
+                    foreach (var review in submittedReviews)
+                    {
+                        writer.WriteLine(review);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving reviews: {ex.Message}");
+            }
+        }
     }
 }
