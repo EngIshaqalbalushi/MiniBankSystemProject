@@ -34,7 +34,7 @@
         // Active accounts storage
         public static string userDataPath = "UserAccounts.txt";
         // Customer reviews storage
-        public static string reviewsFilePath = "GG.txt";
+        public static string pathFile = "GG.txt";
         // Transaction history storage
         public static string transactionsFile = "transactions.txt";
 
@@ -47,22 +47,32 @@
 
         static void Main(string[] args)
         {
+            // display home page in main funaction
             HomePage();
         }
 
         public static void HomePage()
         {
+            // load list of reviews
             LoadReviews();
+            //load user data
             LoadUserData();
+            // load transactions 
+            LoadTransactions();
 
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("         Welcome To One Piece Bank System          \n ");
             Console.WriteLine("**************************************************************\n");
 
-            bool Flag = true;
 
+
+            // use while loop show main contante  and user can selecte opiton  
+
+            bool Flag = true;
             while (Flag)
             {
+                // Display menu options to the user
+
                 Console.WriteLine("Select One Option");
                 Console.WriteLine("1-User ");
                 Console.WriteLine("2-Admin");
@@ -70,11 +80,14 @@
 
                 Console.WriteLine("Enter Number");
 
+                // Input validation loop - ensures user enters a valid integer
+
                 int number;
                 while (!int.TryParse(Console.ReadLine(), out number))
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
                 }
+                // Process user selection using switch statement
 
                 switch (number)
                 {
