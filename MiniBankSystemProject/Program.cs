@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace MiniBankSystemProject
 {
@@ -61,6 +63,14 @@ namespace MiniBankSystemProject
             // display home page in main funaction
             HomePage();
         }
+
+
+
+
+
+
+        //++++++++++++++++++++++++++++++++ Home Page +++++++++++++++++++++++++++++++++++++++++
+
 
         public static void HomePage()
         {
@@ -129,6 +139,10 @@ namespace MiniBankSystemProject
             }
         }
 
+
+        //++++++++++++++++++++++++++++++++ Login +++++++++++++++++++++++++++++++++++++++++
+
+
         // Login System for Users and admin
         public static void logeInSystem()
 
@@ -136,7 +150,7 @@ namespace MiniBankSystemProject
 
             Console.Clear();
             Console.WriteLine("**************************************************************\n");
-            Console.WriteLine("                          Logn in Page                            \n ");
+            Console.WriteLine("                          Login in Page                            \n ");
             Console.WriteLine("**************************************************************\n");
 
 
@@ -182,20 +196,7 @@ namespace MiniBankSystemProject
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //++++++++++++++++++++++++++++++++User Interface+++++++++++++++++++++++++++++++++++++++++
+        //++++++++++++++++++++++++++++++++ User Interface +++++++++++++++++++++++++++++++++++++++++
         public static void UserIU()
         {
             Console.Clear();
@@ -357,13 +358,15 @@ namespace MiniBankSystemProject
 
         }
 
-        // Withdraw Money
+        //############################################## withdraw Money #####################################################
+
         public static void withdrawMoney()
         {
             Console.Clear();
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("                          Withdraw Page                        \n ");
             Console.WriteLine("**************************************************************\n");
+          //  validate user account number
 
             Console.Write("Enter Account Number: ");
             int accountNumber;
@@ -371,6 +374,7 @@ namespace MiniBankSystemProject
             {
                 Console.WriteLine("Invalid input. Please enter a valid account number.");
             }
+            //  validate input withdraw amount
 
             Console.Write("Enter Amount to Withdraw: ");
             double amount;
@@ -379,22 +383,37 @@ namespace MiniBankSystemProject
                 Console.WriteLine("Invalid input. Please enter a positive amount.");
             }
 
+
+            // Check if the account number exists in the system
             if (accountNumbers.Contains(accountNumber))
             {
+                // Get the index of the account number to access corresponding balance
+
                 int index = accountNumbers.IndexOf(accountNumber);
+
+                // Check if the account has sufficient funds for the withdrawal
+
                 if (balances[index] >= amount)
                 {
+                    // Deduct the amount from the balance
+
                     balances[index] -= amount;
+                    // Display success message with new balance
+
                     Console.WriteLine($"Withdrew {amount:C2}. New balance: {balances[index]:C2}");
                     AddTransaction(accountNumber, "WITHDRAWAL", amount, balances[index]);
                 }
                 else
                 {
+                    // Display error message if not enough funds
+
                     Console.WriteLine("Insufficient funds.");
                 }
             }
             else
             {
+                // Display error message if account doesn't exist
+
                 Console.WriteLine("Account not found.");
             }
             SaveUserData();
