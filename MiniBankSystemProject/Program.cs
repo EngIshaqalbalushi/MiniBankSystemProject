@@ -1,4 +1,6 @@
-﻿namespace MiniBankSystemProject
+﻿using System.Linq;
+
+namespace MiniBankSystemProject
 {
     internal class Program
     {
@@ -11,6 +13,9 @@
         // Customer Reviews Stack
         // Stores submitted reviews in LIFO order (most recent first)
         public static Stack<string> submittedReviews = new Stack<string>();
+
+        public static Queue<int> adm = new Queue<int>();
+
 
         // Unique account identifiers
         static List<int> accountNumbers = new List<int>();    
@@ -31,12 +36,18 @@
         // Balance after transaction
         public static List<double> transactionBalances = new List<double>();
 
+      
+
+
+
         // Active accounts storage
         public static string userDataPath = "UserAccounts.txt";
         // Customer reviews storage
-        public static string pathFile = "GG.txt";
+        public static string pathFile = "reviews.txt";
         // Transaction history storage
         public static string transactionsFile = "transactions.txt";
+        // store admin accounts
+        public static string pathAdmin = "adm.txt";
 
 
         // Base account number (increments for new accounts)
@@ -59,6 +70,11 @@
             LoadUserData();
             // load transactions 
             LoadTransactions();
+            // load account requests
+            LoadAccountRequest();
+
+            //load admin
+            LoadAdmi();
 
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("         Welcome To One Piece Bank System          \n ");
@@ -92,10 +108,13 @@
                 switch (number)
                 {
                     case 1:
-                        UserIU();
+                         //UserIU();
+                       logeInSystem();
                         break;
                     case 2:
-                        AdminIU();
+                        logeInSystem();
+
+                        //AdminIU();
                         break;
                     case 3:
                         Console.Clear();
@@ -109,6 +128,66 @@
                 }
             }
         }
+
+        //
+       public static void logeInSystem()
+
+        {
+
+            Console.Clear();
+            Console.WriteLine("**************************************************************\n");
+            Console.WriteLine("                          Logn in Page                            \n ");
+            Console.WriteLine("**************************************************************\n");
+
+
+            Console.Write("Enter Account Number :");
+
+            int number;
+            while (!int.TryParse(Console.ReadLine(), out number))
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+            }
+
+
+            if (accountNumbers.Contains(number))
+            {
+                Console.WriteLine("Account found");
+                UserIU();
+                Console.WriteLine("" );
+              
+            }
+            else if(adm.Contains(number))
+            {
+                Console.WriteLine("Account  found.");
+                AdminIU();
+            }
+            else
+            {
+                Console.WriteLine("Account not found.");
+
+            }
+
+
+
+
+        }
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //++++++++++++++++++++++++++++++++User Interface+++++++++++++++++++++++++++++++++++++++++
         public static void UserIU()
@@ -200,13 +279,34 @@
 
              // Format user information and add to approval queue
             string userInfo = $"{name}|{idNumber}";
+
             requestCreateAccountsInfo.Enqueue(userInfo);
             Console.WriteLine("Your account request has been submitted for admin approval\n.");
-           
+            // Save Account Request 
+            SaveAccountRequest();
             Console.WriteLine("\nPress any key to return to menu...");
             Console.ReadKey();
 
+
         }
+       
+        
+
+        //  Prevent Duplicate Account Requests
+        public static bool IsDuplicateRequest(string name, int idNumber)
+        {
+            foreach (var request in requestCreateAccountsInfo)
+            {
+                string[] parts = request.Split('|');
+                if (parts.Length >= 2 && parts[0] == name && int.Parse(parts[1]) == idNumber)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
 
         //############################################## Deposit Money #####################################################
         public static void depostitMoney()
@@ -215,6 +315,7 @@
             Console.WriteLine("**************************************************************\n");
             Console.WriteLine("                          Deposit Page                         \n ");
             Console.WriteLine("**************************************************************\n");
+            // Collect and validate Account number
 
             Console.Write("Enter Account Number: ");
             int accountNumber;
@@ -222,6 +323,7 @@
             {
                 Console.WriteLine("Invalid input. Please enter a valid account number.");
             }
+            // User enter amount for deposit
 
             Console.Write("Enter Amount to Deposit: ");
             double amount;
@@ -229,10 +331,12 @@
             {
                 Console.WriteLine("Invalid input. Please enter a positive amount.");
             }
+            // Check if the account exists in our records
 
             if (accountNumbers.Contains(accountNumber))
             {
                 int index = accountNumbers.IndexOf(accountNumber);
+                // Update the account balance
                 balances[index] += amount;
                 Console.WriteLine($"Deposited {amount:C2}. New balance: {balances[index]:C2}");
                 AddTransaction(accountNumber, "DEPOSIT", amount, balances[index]);
@@ -241,6 +345,8 @@
             {
                 Console.WriteLine("Account not found.");
             }
+            // Save the updated data
+
             SaveUserData();
 
         }
@@ -758,6 +864,75 @@
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading transactions: {ex.Message}");
+            }
+        }
+
+
+
+        // Save the request in the file
+        public static void SaveAccountRequest()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(userDataPath))
+                {
+                    foreach (var request in requestCreateAccountsInfo)
+                    {
+                        writer.WriteLine(request);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving account requests: {ex.Message}");
+            }
+        }
+        // Load the request from the file
+        public static void LoadAccountRequest()
+        {
+            try
+            {
+                if (!File.Exists(userDataPath)) return;
+                requestCreateAccountsInfo.Clear();
+                using (StreamReader reader = new StreamReader(userDataPath))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        requestCreateAccountsInfo.Enqueue(line);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading account requests: {ex.Message}");
+            }
+        }
+
+
+
+
+
+        // load admin info
+
+        public static void LoadAdmi()
+        {
+            try
+            {
+                if (!File.Exists(userDataPath)) return;
+                requestCreateAccountsInfo.Clear();
+                using (StreamReader reader = new StreamReader(pathAdmin))
+                {
+                    int line;
+                    while ((line =int.Parse(reader.ReadLine())) != null)
+                    {
+                        adm.Enqueue(line);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading account requests: {ex.Message}");
             }
         }
 
